@@ -9,7 +9,7 @@ module.exports = defineConfig([
     ignores: ['dist/*'],
   },
   {
-    files: ['**/*.test.js', '**/*.spec.js'],
+    files: ['**/*.test.js', '**/*.test.jsx', '**/*.spec.js', '**/*.spec.jsx'],
     ...pluginJest.configs['flat/recommended'],
   },
 ]);
