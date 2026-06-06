@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { FlatList, View, StyleSheet, Pressable } from 'react-native';
+import { FlatList, View, StyleSheet, Pressable, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigate } from 'react-router-native';
+import { useDebounce } from 'use-debounce';
 
 import RepositoryItem from './RepositoryItem';
 import useRepositories from '../hooks/useRepositories';
@@ -9,6 +10,15 @@ import useRepositories from '../hooks/useRepositories';
 const styles = StyleSheet.create({
   separator: {
     height: 10,
+  },
+  searchInput: {
+    margin: 15,
+    marginBottom: 0,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#bbbbbb',
+    borderRadius: 4,
+    backgroundColor: '#ffffff',
   },
 });
 
@@ -20,16 +30,29 @@ const orderOptions = {
   lowest: { orderBy: 'RATING_AVERAGE', orderDirection: 'ASC' },
 };
 
-const RepositoryListHeader = ({ selectedOrder, setSelectedOrder }) => {
+const RepositoryListHeader = ({
+  selectedOrder,
+  setSelectedOrder,
+  searchKeyword,
+  setSearchKeyword,
+}) => {
   return (
-    <Picker
-      selectedValue={selectedOrder}
-      onValueChange={(value) => setSelectedOrder(value)}
-    >
-      <Picker.Item label="Latest repositories" value="latest" />
-      <Picker.Item label="Highest rated repositories" value="highest" />
-      <Picker.Item label="Lowest rated repositories" value="lowest" />
-    </Picker>
+    <View>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search repositories"
+        value={searchKeyword}
+        onChangeText={setSearchKeyword}
+      />
+      <Picker
+        selectedValue={selectedOrder}
+        onValueChange={(value) => setSelectedOrder(value)}
+      >
+        <Picker.Item label="Latest repositories" value="latest" />
+        <Picker.Item label="Highest rated repositories" value="highest" />
+        <Picker.Item label="Lowest rated repositories" value="lowest" />
+      </Picker>
+    </View>
   );
 };
 
@@ -37,6 +60,8 @@ export const RepositoryListContainer = ({
   repositories,
   selectedOrder,
   setSelectedOrder,
+  searchKeyword,
+  setSearchKeyword,
 }) => {
   const navigate = useNavigate();
 
@@ -58,6 +83,8 @@ export const RepositoryListContainer = ({
         <RepositoryListHeader
           selectedOrder={selectedOrder}
           setSelectedOrder={setSelectedOrder}
+          searchKeyword={searchKeyword}
+          setSearchKeyword={setSearchKeyword}
         />
       }
     />
@@ -66,19 +93,26 @@ export const RepositoryListContainer = ({
 
 const RepositoryList = () => {
   const [selectedOrder, setSelectedOrder] = useState('latest');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [debouncedKeyword] = useDebounce(searchKeyword, 500);
 
   const { orderBy, orderDirection } = orderOptions[selectedOrder];
 
-  const { repositories } = useRepositories({ orderBy, orderDirection });
+  const { repositories } = useRepositories({
+    orderBy,
+    orderDirection,
+    searchKeyword: debouncedKeyword,
+  });
 
   return (
     <RepositoryListContainer
       repositories={repositories}
       selectedOrder={selectedOrder}
       setSelectedOrder={setSelectedOrder}
+      searchKeyword={searchKeyword}
+      setSearchKeyword={setSearchKeyword}
     />
   );
 };
-
 
 export default RepositoryList;

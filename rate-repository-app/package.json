@@ -35,6 +35,7 @@
     "react-native-web": "^0.21.0",
     "react-router-native": "^6.30.3",
     "rxjs": "^7.8.2",
+    "use-debounce": "^10.1.1",
     "yup": "^1.7.1"
   },
   "private": true,
