@@ -7,7 +7,7 @@ import AppBar from './AppBar';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 import CreateReview from './CreateReview';
-import MyReviews from './MyReviews';
+import MyReviews from './MyReviews.jsx';
 import theme from '../theme';
 
 const styles = StyleSheet.create({
