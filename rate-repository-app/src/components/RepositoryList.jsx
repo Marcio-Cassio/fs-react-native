@@ -62,6 +62,7 @@ export const RepositoryListContainer = ({
   setSelectedOrder,
   searchKeyword,
   setSearchKeyword,
+  onEndReach,
 }) => {
   const navigate = useNavigate();
 
@@ -87,6 +88,8 @@ export const RepositoryListContainer = ({
           setSearchKeyword={setSearchKeyword}
         />
       }
+      onEndReached={onEndReach}
+      onEndReachedThreshold={0.5}
     />
   );
 };
@@ -98,11 +101,16 @@ const RepositoryList = () => {
 
   const { orderBy, orderDirection } = orderOptions[selectedOrder];
 
-  const { repositories } = useRepositories({
+  const { repositories, fetchMore } = useRepositories({
+    first: 8,
     orderBy,
     orderDirection,
     searchKeyword: debouncedKeyword,
   });
+
+  const onEndReach = () => {
+    fetchMore();
+  };
 
   return (
     <RepositoryListContainer
@@ -111,6 +119,7 @@ const RepositoryList = () => {
       setSelectedOrder={setSelectedOrder}
       searchKeyword={searchKeyword}
       setSearchKeyword={setSearchKeyword}
+      onEndReach={onEndReach}
     />
   );
 };
